@@ -11,6 +11,7 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
     console.log("In the next middleware")
+    res.send('<h1>Hello are you there!</h1>');
 })
 
 const server = http.createServer(app);
