@@ -13,14 +13,17 @@ module.exports = class Product {
       'products.json'
     );
     fs.readFile(p, (err, fileContent) => {
-        //! Add try catch block instead of if statement because, if statement did not detect the error 
-        try {
-          products = JSON.parse(fileContent);
-        } catch (err) {
-          products = [];
-        }
+      let products;
+
+      //! Add try catch block instead of if statement because, if statement did not detect the error 
+      try {
+        products = JSON.parse(fileContent);
+      } catch (err) {
+        products = [];
+      }
+
       products.push(this);
-      fs.writeFile(p, JSON.stringify(products), (err) => {
+      fs.writeFile(p, JSON.stringify(products), err => {
         if (err) {
           console.log(err);
         }
@@ -34,9 +37,9 @@ module.exports = class Product {
       'data',
       'products.json'
     );
-    fs.readFile(p, (err, fileContent) => {
-       //! Add try catch block instead of if statement because, if statement did not detect the error 
-       try {
+    fs.readFile(p, (_err, fileContent) => {
+      //! Add try catch block instead of if statement because, if statement did not detect the error 
+      try {
         cb(JSON.parse(fileContent));
       } catch (_err) {
         cb([]);
