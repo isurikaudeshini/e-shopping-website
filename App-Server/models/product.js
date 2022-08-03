@@ -16,21 +16,15 @@ const getProductsFromFile = (cb) => {
     } else {
       cb(JSON.parse(fileContent));
     }
-    //! Add try catch block instead of if statement because, if statement did not detect the error
-    //     try {
-    //       cb(JSON.parse(fileContent));
-    //     } catch (_err) {
-    //       return cb([]);
-    //     }
   });
 };
 
 module.exports = class Product {
-  constructor(title, imageUrl, description, price) {             //initialize new product
+  constructor(title, imageUrl, price, description) {          //initialize new product
     this.title = title;
     this.imageUrl = imageUrl;
-    this.description = description;
     this.price = price;
+    this.description = description;
   }
 
   save() {
