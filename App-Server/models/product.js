@@ -1,49 +1,45 @@
 const fs = require('fs');
 const path = require('path');
 
+//gobal helper constant
+const p = path.join(
+  path.dirname(require.main.filename),
+  'data',
+  'products.json'
+);
+
+// helper function
+const getProductsFromFile = (cb) => {
+  fs.readFile(p, (_err, fileContent) => {
+    if (_err) {
+      cb([]);
+    } else {
+      cb(JSON.parse(fileContent));
+    }
+    //! Add try catch block instead of if statement because, if statement did not detect the error
+    //     try {
+    //       cb(JSON.parse(fileContent));
+    //     } catch (_err) {
+    //       return cb([]);
+    //     }
+  });
+};
+
 module.exports = class Product {
   constructor(t) {
     this.title = t;
   }
 
   save() {
-    const p = path.join(
-      path.dirname(require.main.filename),
-      'data',
-      'products.json'
-    );
-    fs.readFile(p, (err, fileContent) => {
-      let products;
-
-      //! Add try catch block instead of if statement because, if statement did not detect the error 
-      try {
-        products = JSON.parse(fileContent);
-      } catch (err) {
-        products = [];
-      }
-
+    getProductsFromFile((products) => {
       products.push(this);
       fs.writeFile(p, JSON.stringify(products), err => {
-        if (err) {
-          console.log(err);
-        }
+        console.log(err);
       });
     });
   }
 
   static fetchAll(cb) {
-    const p = path.join(
-      path.dirname(require.main.filename),
-      'data',
-      'products.json'
-    );
-    fs.readFile(p, (_err, fileContent) => {
-      //! Add try catch block instead of if statement because, if statement did not detect the error 
-      try {
-        cb(JSON.parse(fileContent));
-      } catch (_err) {
-        cb([]);
-      }
-    });
+    getProductsFromFile(cb);
   }
 };
