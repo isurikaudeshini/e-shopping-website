@@ -9,6 +9,9 @@ const router = express.Router();
 router.get('/', shopController.getIndex);
 //load getProducts
 router.get('/products', shopController.getProducts);
+
+//dynamic route but others are normal , order matters
+router.get('/products/:productId', shopController.getProduct);
 //load getCart
 router.get('/cart', shopController.getCart);
 
