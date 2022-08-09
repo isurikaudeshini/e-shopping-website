@@ -13,11 +13,11 @@ module.exports = class Cart {
       }
       //Anayze the cart => Find existing product
       const existingProductIndex = cart.products.findIndex(
-        prod => prod.id === id
+        (prod) => prod.id === id
       );
       const existingProduct = cart.products[existingProductIndex];
       let updatedProduct;
-    // Add new product/ increase quantity
+      // Add new product/ increase quantity
       if (existingProduct) {
         updatedProduct = { ...existingProduct };
         updatedProduct.qty = updatedProduct.qty + 1;
@@ -28,8 +28,27 @@ module.exports = class Cart {
         cart.products = [...cart.products, updatedProduct];
       }
       cart.totalPrice = cart.totalPrice + +productPrice; //+ is used to convert it to a number
-      fs.writeFile(p, JSON.stringify(cart), err=>{
-        console.log(err);
+      fs.writeFile(p, JSON.stringify(cart), (err) => {
+        console.log(err, 'a');
+      });
+    });
+  }
+
+  static deleteProduct(id, productPrice) {
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {  //if don't find any cart, certainly nothing to delete
+        return;
+      }
+      const updatedCart = { ...JSON.parse(fileContent)};
+      const product = updatedCart.products.find((prod) => prod.id === id);
+      const productQty = product.qty;
+      updatedCart.products = updatedCart.products.filter(
+        (prod) => prod.id !== id
+      );
+      updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQty;
+
+      fs.writeFile(p, JSON.stringify(updatedCart), (err) => {
+        if (err) return console.log(err);
       });
     });
   }

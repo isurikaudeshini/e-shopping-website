@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const Cart = require('./cart');
+
 //gobal helper constant
 const p = path.join(
   path.dirname(require.main.filename),
@@ -11,16 +13,16 @@ const p = path.join(
 // helper function
 const getProductsFromFile = (cb) => {
   fs.readFile(p, (_err, fileContent) => {
-    if (_err) {
-      cb([]);
-    } else {
+    try {
       cb(JSON.parse(fileContent));
+    } catch (_err) {
+      cb([]);
     }
   });
 };
 
 module.exports = class Product {
-  constructor(id,title, imageUrl, price, description) {
+  constructor(id, title, imageUrl, price, description) {
     //initialize new product
     this.id = id;
     this.title = title;
@@ -32,10 +34,10 @@ module.exports = class Product {
   save() {
     //add a new property to entire product object
     getProductsFromFile((products) => {
-      if(this.id) {
+      if (this.id) {
         const existingProductIndex = products.findIndex(
-          prod => prod.id === this.id
-          );
+          (prod) => prod.id === this.id
+        );
         const updatedProducts = [...products];
         updatedProducts[existingProductIndex] = this;
         fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
@@ -45,7 +47,7 @@ module.exports = class Product {
         this.id = Math.random().toString();
         products.push(this);
         fs.writeFile(p, JSON.stringify(products), (err) => {
-          console.log(err);
+          if (err) return console.log(err);
         });
       }
     });
@@ -53,12 +55,13 @@ module.exports = class Product {
 
   static deleteById(id) {
     getProductsFromFile((products) => {
-      const productIndex = products.filter(prod => prod.id !== id); //takes an nonymous function and will return me all elements as part of a new arry 
-      fs.writeFile(p, JSON.stringify(updatedProducts), (err) =>{
+      const product = products.find((prod) => prod.id === id);
+      const updatedProducts = products.filter((prod) => prod.id !== id); //takes an nonymous function and will return me all elements as part of a new arry
+      fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
         if (!err) {
-
+          Cart.deleteProduct(id, product.price);
         }
-      })
+      });
     });
   }
 

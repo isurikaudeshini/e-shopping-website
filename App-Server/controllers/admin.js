@@ -24,13 +24,11 @@ exports.getEditProduct = (req, res, next) => {
   //new path defined to render
   const editMode = req.query.edit;
   if (!editMode) {
-    console.log('im in edirmode');
     return res.redirect('/');
   }
   const prodId = req.params.productId;
   Product.findById(prodId, (product) => {
     if (!product) {
-      console.log(product);
       return res.redirect('/');
     }
     res.render('admin/edit-product', {
@@ -72,5 +70,6 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-
+  Product.deleteById(prodId);
+  res.redirect('/admin/products');
 };
