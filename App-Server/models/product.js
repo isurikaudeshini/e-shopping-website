@@ -21,7 +21,7 @@ class Product {
     } else {
       dbOp = db.collection('products').insertOne(this);
     }
-    return 
+    return dbOp
       .then((result) => {
         console.log(result);
       })
