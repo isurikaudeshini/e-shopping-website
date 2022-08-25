@@ -7,17 +7,17 @@ class Product {
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
-    this._id = new mongodb.ObjectId(id);   //automatically cinvert the _id string to objectid object on the constructor
+    this._id = id ? new mongodb.ObjectId(id) : null; //ternary expression,if else
   }
 
   save() {
     const db = getDb();
     let dbOp;
-    if(this._id) {
+    if (this._id) {
       //update
       dbOp = db
-      .collection('products')
-      .updateOne({_id: this._id },{$set: this});
+        .collection('products')
+        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this });
     } else {
       dbOp = db.collection('products').insertOne(this);
     }
@@ -43,16 +43,34 @@ class Product {
 
   static findById(prodId) {
     const db = getDb();
-    return db
-      .collection('products')
-      .find({ _id: new mongodb.ObjectId(prodId)}) 
-      //here passes the objectid(prodId) object as id instead of a string
-      .next()
-      .then(product => {
-        console.log(product);
-        return product;
-      })
-      .catch((err) => console.log(err));
+    return (
+      db
+        .collection('products')
+        .find({ _id: new mongodb.ObjectId(prodId) })
+        //here passes the objectid(prodId) object as id instead of a string
+        .next()
+        .then((product) => {
+          console.log(product);
+          return product;
+        })
+        .catch((err) => console.log(err))
+    );
+  }
+
+  static deleteById(prodId) {
+    const db = getDb(); //access database
+    console.log(prodId, 'line 62');
+    return (
+      db
+        .collection('products')
+        .deleteOne({ _id: new mongodb.ObjectId(prodId) })
+        /* reachout products collection,deleteone product with specified filter , prodId argument is 
+   converted to a objectid by passing it to the ObjectId constructor */
+        .then((result) => {
+          console.log('Deleted!');
+        })
+        .catch((err) => console.log(err))
+    );
   }
 }
 
