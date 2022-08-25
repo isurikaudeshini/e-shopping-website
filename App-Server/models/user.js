@@ -14,12 +14,17 @@ class User {
   static findById(userId) {
     const db = getDb();
     return db.collection('users').insertOne(this);
-
   }
   static findById(userId) {
-    const  db = getDb();
-    return db.collection('users')
-    .findOne({_id: new ObjectId(userId)}) //findOne is an alternative for the find().next(), 
+    const db = getDb();
+    return db
+      .collection('users')
+      .findOne({ _id: new ObjectId(userId) }) //findOne is an alternative for the find().next(),
+      .then(user => {
+        console.log(user);
+        return user;
+      })
+      .catch((err) => console.log(err));
   }
 }
 
