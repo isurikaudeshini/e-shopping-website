@@ -26,7 +26,7 @@ class User {
       /*updatedCart is an object, has items property array*/
       items: [
         {
-          ...product /*pullout all properties of this object_spread operator*/,
+          productId: new ObjectId(product._id),/*pullout all properties of this object_spread operator*/
           quantity: 1 /*in product the quantity property is overwrited*/,
         },
       ],
@@ -34,7 +34,7 @@ class User {
     const db = getDb();
     return db
     .collection('users')
-    .updatedOne(
+    .updateOne(
       { _id: new ObjectId(this._id) },
       { $set: { cart: updatedCart } } //overwritten by $set
     );
