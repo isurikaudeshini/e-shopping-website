@@ -2,7 +2,28 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;  //mongoose is an object, Schema is a constructor
 
-const productSchema = new
+const productSchema = new Schema({
+  title: {
+    type: String,
+    require: true
+  },
+  price: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  imageUrl: {
+    type: String,
+    required: true
+  }
+
+});
+
+
+
 // const mongodb = require('mongodb');
 // const getDb = require('../util/database').getDb;
 
