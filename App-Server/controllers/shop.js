@@ -138,7 +138,6 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
-  let fetchCart;
   req.user
     .addOrder()
     .then((result) => {
@@ -149,7 +148,7 @@ exports.postOrder = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
   req.user
-    .getOrders({ include: ['products'] })
+    .getOrders()
     .then((orders) => {
       res.render('shop/orders', {
         path: '/orders',
