@@ -66,7 +66,7 @@ class User {
 
     return db
       .collection('products')
-      .find({ _id: { $in: productIds } })  //takes an array of ids, every id will get back a cursor which holds references to all products
+      .find({ _id: { $in: productIds } }) //takes an array of ids, every id will get back a cursor which holds references to all products
       .toArray()
       .then((products) => {
         return products.map((p) => {
@@ -81,14 +81,30 @@ class User {
   }
 
   deleteItemFromCart(productId) {
-    const updatedCartItems = this.cart.items.filter(item => {
+    const updatedCartItems = this.cart.items.filter((item) => {
       return item.productId.toString() !== productId.toString();
     });
     const db = getDb();
     return db.collection('users').updateOne(
       { _id: new mongodb.ObjectId(this._id) },
-      { $set: { cart: {items: updatedCartItems} } } //overwritten by $set
+      { $set: { cart: { items: updatedCartItems } } } //overwritten by $set
     );
+  }
+
+  addOrder() {
+    const db = getDb();
+    return db
+      .collection('orders')
+      .insertOne(this.cart)
+      .then((result) => {
+        this.cart = { items: [] };
+        return db
+          .collection('users')
+          .updateOne(
+            { _id: new mongodb.ObjectId(this._id) },
+            { $set: { cart: { items: [] } } }
+          );
+      });
   }
 
   static findById(userId) {
