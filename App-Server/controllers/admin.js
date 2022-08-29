@@ -88,7 +88,7 @@ exports.getProducts = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId; //extracted product id as prodId
   console.log(prodId, 'line 87');
-  Product.deleteById(prodId) //prodId is passed as a string
+  Product.findByIdAndRemove(prodId) //prodId is passed as a string
     .then((/*won't receive an argument*/) => {
       console.log('DESTROYED PRODUCT');
       res.redirect('/admin/products');
