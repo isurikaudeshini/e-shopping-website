@@ -45,32 +45,19 @@ userSchema.methods.addToCart = function (product) {
   }
   const updatedCart = {
     /*updatedCart is an object, has items property array*/
-    items: updatedCartItems
+    items: updatedCartItems,
   };
   this.cart = updatedCart;
   return this.save();
 };
 
-// userSchema.methods.getCart = function(product) {
-//     const productIds = this.cart.items.map((i) => {
-//       return i.productId;
-//     }); //construct an array # mapping this to transform every item as an object, pass to $in
-
-//     return 
-//       Product.collection('products')
-//       .find({ _id: { $in: productIds } }) //takes an array of ids, every id will get back a cursor which holds references to all products
-//       .toArray()
-//       .then((products) => {
-//         return products.map((p) => {
-//           return {
-//             ...p,
-//             quantity: this.cart.items.find((i) => {
-//               return i.productId.toString() === p._id.toString();
-//             }).quantity,
-//           };
-//         });
-//       });
-// }
+userSchema.methods.removeFromCart = function (productId) {
+  const updatedCartItems = this.cart.items.filter((item) => {
+    return item.productId.toString() !== productId.toString();
+  });
+  this.cart.items = updatedCartItems;
+  return this.save();
+};
 
 module.exports = mongoose.model('User', userSchema);
 
