@@ -18,6 +18,7 @@ exports.postAddProduct = (req, res, next) => {
     price: price,
     description: description,
     imageUrl: imageUrl,
+    userId: req.user  //in mongoose pick the id form rntire uder object
   });
   product
     .save() //save method comes from mongoose
