@@ -1,11 +1,11 @@
 exports.getLogin = (req, res, next) => {
-        res.render('auth/login', {
-          path: '/login',
-          pageTitle: 'login',
-          isAuthenticated: req.isLoggedIn
-        });
-  };
+  res.render('auth/login', {
+    path: '/login',
+    pageTitle: 'login',
+    isAuthenticated: req.isLoggedIn,
+  });
+};
 exports.postLogin = (req, res, next) => {
-  req.isLoggedIn = true;
-        res.redirect('/');
-  };
+  req.isLoggedIn = true; //user is authenticated, if not
+  res.redirect('/');
+};
