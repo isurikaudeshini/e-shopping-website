@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session'); //when we start up server for every incoming request initializing this
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
@@ -18,6 +19,9 @@ const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({secret: 'my secret', resave: false, saveUninitialized: false})
+);
+//session setup is a js object, secret is a long string, session will not be save for every request but some thing changed, ensuring no session will save unless changed
 
 app.use((req, res, next) => {
   User.findById('5bab316ce0a7c75f783cb8a8')
