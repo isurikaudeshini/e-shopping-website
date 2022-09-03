@@ -9,10 +9,14 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
-  User.findById('630cff6241b90202bac328f4').then((user) => {
+  User.findById('630cff6241b90202bac328f4').then((user) => { 
     req.session.isLoggedIn = true;
     req.session.user = user;
-    res.redirect('/');
+    console.log(user, "user in line 15 auth.js");
+    req.session.save(err => {
+      console.log(err);
+      res.redirect('/');
+    })
   })
   .catch(err => console.log(err));
 };

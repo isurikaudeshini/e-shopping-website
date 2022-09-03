@@ -38,13 +38,16 @@ app.use(
 //session setup is a js object, secret is a long string, session will not be save for every request but some thing changed, ensuring no session will save unless changed
 
 app.use((req, res, next) => {
-  User.findById('5bab316ce0a7c75f783cb8a8')
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
-});
+  if(!req.session.user){
+    return next();
+  }
+  User.findById(req.session.user._id) 
+  .then((user) => {
+    req.user =  user;
+    next();
+  })
+  .catch(err => console.log(err));
+})
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
