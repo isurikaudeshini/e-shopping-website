@@ -122,11 +122,8 @@ exports.getReset = (req, res, next) => {
   }
   res.render('auth/reset', {
     path: '/reset',
-    pageTitle: 'Signup',
+    pageTitle: 'Reset Password',
     errorMessage: message,
   });
 };
 
-
-//  I made it !!!
-// Awahma whatsapp ekn msg ek danna
