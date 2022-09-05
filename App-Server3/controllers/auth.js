@@ -1,6 +1,17 @@
 const bcrypt = require('bcryptjs'); //when hased can't recontruct or Decrypt
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
 
 const User = require('../models/user');
+
+const transporter = nodemailer.createTransport(
+  sendgridTransport({
+    auth: {
+      api_key:
+        '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',
+    },
+  })
+); //transporter configured
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error');
@@ -26,7 +37,7 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    errorMessage: message
+    errorMessage: message,
   });
 };
 
@@ -83,7 +94,14 @@ exports.postSignup = (req, res, next) => {
         })
         .then((result) => {
           res.redirect('/login');
-        });
+          return transporter.sendMail({
+            to: email,
+            from: '<as95725@sci.sjp.ac.lk>',
+            subject: 'Signup Suceeded!',
+            html: '<h1>You succesfully signed-up</h1>',
+          });
+        })
+        .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 };
@@ -94,3 +112,21 @@ exports.postLogout = (req, res, next) => {
     res.redirect('/');
   });
 };
+
+exports.getReset = (req, res, next) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  res.render('auth/reset', {
+    path: '/reset',
+    pageTitle: 'Signup',
+    errorMessage: message,
+  });
+};
+
+
+//  I made it !!!
+// Awahma whatsapp ekn msg ek danna
