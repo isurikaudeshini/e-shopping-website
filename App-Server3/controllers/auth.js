@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs'); //when hased can't recontruct or Decrypt
+
 const User = require('../models/user');
 
 exports.getLogin = (req, res, next) => {
@@ -38,9 +40,12 @@ exports.postSignup = (req, res, next) => {
     if (userDoc) {
       return res.redirect('/signup');
     }
+    return bcrypt.hash(password, 12) //1st arg: string to a password, 2nd arg:salt value, how many rounds tobe hash
+  }) 
+    .then(hashedPassword => {
     const user = new User({
       email: email,
-      password: password,
+      password: hashedPassword,
       cart: {items: [] }
     });
     return user.save();
