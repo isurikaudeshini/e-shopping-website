@@ -6,7 +6,7 @@ exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    isAuthenticated: false,
+    errorMessage: req.flash('error'),
   });
 };
 
@@ -14,7 +14,6 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    isAuthenticated: false,
   });
 };
 
@@ -24,15 +23,18 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        res.redirect('/login');
+        req.flash('error', 'Invalid email or Password.');
+        return res.redirect('/login');
       }
-      bcrypt.compare(password, user.password).then((doMatch) => {
+      bcrypt
+      .compare(password, user.password)
+      .then((doMatch) => {
         if (doMatch) {
           req.session.isLoggedIn = true;
           req.session.user = user;
           return req.session.save((err) => {
             console.log(err);
-            return res.redirect('/');
+            res.redirect('/');
           });
         }
         res.redirect('/login');
