@@ -13,7 +13,7 @@ router.get('/reset', authController.getReset);
 
 router.post('/login', authController.postLogin);
 
-router.post('/signup', check('email').isEmail(), authController.postSignup); //isEmail method to check the email field on the incoming request 
+router.post('/signup', check('email').isEmail().withMessage('Please enter a valid email.'), authController.postSignup); //isEmail method to check the email field on the incoming request 
 
 router.post('/logout', authController.postLogout);
 
