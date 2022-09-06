@@ -34,6 +34,12 @@ router.post(
     )
       .isLength({ min: 5 })
       .isAlphanumeric(),
+    body('confirmPassword').custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Passwords have to match!');
+      }
+      return true;
+    }),
   ],
   authController.postSignup
 ); //isEmail method to check the email field on the incoming request
