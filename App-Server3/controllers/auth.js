@@ -74,45 +74,33 @@ exports.postLogin = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors.array());
     return res.status(422).render('auth/signup', {
       path: '/signup',
       pageTitle: 'Signup',
-      errorMessage: errors.array()[0].msg
-    });;
+      errorMessage: errors.array()[0].msg,
+    });
   }
-  User.findOne({ email: email })
-    .then((userDoc) => {
-      if (userDoc) {
-        req.flash(
-          'error',
-          'E-mail exists already, please pick a different one!'
-        );
-        return res.redirect('/signup');
-      }
-      return bcrypt
-        .hash(password, 12) //1st arg: string to a password, 2nd arg:salt value, how many rounds tobe hash
-        .then((hashedPassword) => {
-          const user = new User({
-            email: email,
-            password: hashedPassword,
-            cart: { items: [] },
-          });
-          return user.save();
-        })
-        .then((result) => {
-          res.redirect('/login');
-          return transporter.sendMail({
-            to: email,
-            from: '<as95725@sci.sjp.ac.lk>',
-            subject: 'Signup Suceeded!',
-            html: '<h1>You succesfully signed-up</h1>',
-          });
-        })
-        .catch((err) => console.log(err));
+  bcrypt
+    .hash(password, 12) //1st arg: string to a password, 2nd arg:salt value, how many rounds tobe hash
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        password: hashedPassword,
+        cart: { items: [] },
+      });
+      return user.save();
+    })
+    .then((result) => {
+      res.redirect('/login');
+      return transporter.sendMail({
+        to: email,
+        from: '<as95725@sci.sjp.ac.lk>',
+        subject: 'Signup Suceeded!',
+        html: '<h1>You succesfully signed-up</h1>',
+      });
     })
     .catch((err) => console.log(err));
 };
@@ -175,19 +163,19 @@ exports.getNewPassword = (req, res, next) => {
   User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } }) //gt => greater than
     .then((user) => {
       // if (user) {
-        let message = req.flash('error');
-        if (message.length > 0) {
-          message = message[0];
-        } else {
-          message = null;
-        }
-        res.render('auth/new-password', {
-          path: '/new-password',
-          pageTitle: 'New Password',
-          errorMessage: message,
-          userId: user._id.toString(),
-          passwordToken: token,
-        });
+      let message = req.flash('error');
+      if (message.length > 0) {
+        message = message[0];
+      } else {
+        message = null;
+      }
+      res.render('auth/new-password', {
+        path: '/new-password',
+        pageTitle: 'New Password',
+        errorMessage: message,
+        userId: user._id.toString(),
+        passwordToken: token,
+      });
     })
     .catch((err) => console.log(err), 'line 184');
 };
@@ -202,19 +190,19 @@ exports.postNewPassword = (req, res, next) => {
     resetToken: passwordToken,
     resetTokenExpiration: { $gt: Date.now() },
     _id: userId,
-  }).then(
-    user => {
+  })
+    .then((user) => {
       resetUser = user;
       return bcrypt.hash(newPassword, 12); // no of salting rounds 12
     })
-      .then((hashedPassword) => {
-        resetUser.password = hashedPassword;
-        resetUser.resetToken = undefined;
-        resetUser.resetTokenExpiration = undefined;
-        return resetUser.save();
-      })
-      .then((result) => {
-        res.redirect('/login');
-      })
-      .catch((err) => console.log(err))
+    .then((hashedPassword) => {
+      resetUser.password = hashedPassword;
+      resetUser.resetToken = undefined;
+      resetUser.resetTokenExpiration = undefined;
+      return resetUser.save();
+    })
+    .then((result) => {
+      res.redirect('/login');
+    })
+    .catch((err) => console.log(err));
 };

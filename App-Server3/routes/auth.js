@@ -5,6 +5,7 @@ const {
 } /*Destructured, js object*/ = require('express-validator'); //check is a subpackage of express-validator
 
 const authController = require('../controllers/auth');
+const User = require('../models/user');
 
 const router = express.Router();
 
@@ -23,10 +24,17 @@ router.post(
       .isEmail()
       .withMessage('Please enter a valid email.')
       .custom((value, { req }) => {
-        if (value === 'test@test.com') {
-          throw new Error('THis email is forbidden');
-        }
-        return true;
+        // if (value === 'test@test.com') {
+        //   throw new Error('This email is forbidden');
+        // }
+        // return true;
+        return User.findOne({ email: value }).then((userDoc) => {
+          if (userDoc) {
+            return Promise.reject(
+              'E-mail exists already, please pick a different one!'
+            );
+          }
+        });
       }),
     body(
       'password',
