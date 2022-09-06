@@ -100,7 +100,7 @@ exports.postEditProduct = (req, res, next) => {
         imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDesc,
-        _id: prodId
+        _id: prodId  //bcz line 85 prodId is rendering then need to submit with _id
       },
       errorMessage: errors.array()[0].msg,
     validationErrors: errors.array()
