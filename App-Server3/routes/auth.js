@@ -1,4 +1,5 @@
 const express = require('express');
+const { check } /*Destructured, js object*/ = require('express-validator');  //check is a subpackage of express-validator
 
 const authController = require('../controllers/auth');
 
@@ -12,7 +13,7 @@ router.get('/reset', authController.getReset);
 
 router.post('/login', authController.postLogin);
 
-router.post('/signup', authController.postSignup);
+router.post('/signup', check('email').isEmail(), authController.postSignup); //isEmail method to check the email field on the incoming request 
 
 router.post('/logout', authController.postLogout);
 
