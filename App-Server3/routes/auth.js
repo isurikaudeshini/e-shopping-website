@@ -1,5 +1,8 @@
 const express = require('express');
-const { check } /*Destructured, js object*/ = require('express-validator'); //check is a subpackage of express-validator
+const {
+  check,
+  body,
+} /*Destructured, js object*/ = require('express-validator'); //check is a subpackage of express-validator
 
 const authController = require('../controllers/auth');
 
@@ -15,15 +18,23 @@ router.post('/login', authController.postLogin);
 
 router.post(
   '/signup',
-  check('email')
-    .isEmail()
-    .withMessage('Please enter a valid email.')
-    .custom((value, {req}) => {
-      if (value === 'test@test.com') {
-        throw new Error('THis email is forbidden');
-      }
-      return true;
-    }),
+  [
+    check('email')
+      .isEmail()
+      .withMessage('Please enter a valid email.')
+      .custom((value, { req }) => {
+        if (value === 'test@test.com') {
+          throw new Error('THis email is forbidden');
+        }
+        return true;
+      }),
+    body(
+      'password',
+      'Please enter a passwod with only numbers and text and at least 5 characters.'
+    )
+      .isLength({ min: 5 })
+      .isAlphanumeric(),
+  ],
   authController.postSignup
 ); //isEmail method to check the email field on the incoming request
 
