@@ -20,16 +20,28 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions',
 });
-const csrfProtection = csrf();
 
 const fileStorage = multer.diskStorage({
-  destination:(req, file, cb) => {
+  destination: (req, file, cb) => {
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null,file.filename + '-' + file.originalname);
-  }
+    cb(null,new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
+  },
 });
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -38,20 +50,23 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(multer({storage: fileStorage }).single('image')) //buffer is turned into binary , and store in file
+const csrfProtection = csrf();
+
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+); //buffer is turned into binary , and store in file
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   session({
     secret: 'my secret',
     resave: false,
     saveUninitialized: false,
-    store: store
+    store: store,
   })
 );
 
-app.use(flash()); //function
 app.use(csrfProtection);
+app.use(flash()); //function
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
@@ -87,12 +102,13 @@ app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
   // res.redirect('/500')
+
   res.status(500).render('500', {
     pageTitle: 'Error',
     path: '/500',
-    isAuthenticated: req.session.isLoggedIn
+    isAuthenticated: req.session.isAuthenticated,
   });
-})
+});
 
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
