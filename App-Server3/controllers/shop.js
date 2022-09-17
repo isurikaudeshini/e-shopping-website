@@ -1,6 +1,8 @@
 const fs = require('fs'); //file system of node
 const path = require('path');
 
+const PDFDocument = require('pdfkit');
+
 const Product = require('../models/product');
 const Order = require('../models/order');
 
@@ -156,6 +158,12 @@ exports.getInvoice = (req, res, next) => {
     }
     const invoiceName = 'invoice-' + orderId + '.pdf';
   const invoicePath = path.join('data', 'invoices', invoiceName);
+  const pdfDoc = new PDFDocument();
+  pdfDoc.pipe(fs.createWriteStream(invoicePath));
+  pdfDoc.pipe(res);
+  pdfDoc.text('Hello World!');
+
+  pdfDoc.end();
   // fs.readFile(invoicePath, (err, data) => {
   //   if (err) {
   //     return next(err);
@@ -164,11 +172,8 @@ exports.getInvoice = (req, res, next) => {
   //   res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
   //   res.send(data);  //function by express middleware
   // })
-  const file = fs.createReadStream(invoicePath);  //read some specific data
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 
-  'inline: filename="' + invoiceName + '"'
-  );
-  file.pipe(res); //forward data that is read in the stream to the response, bcz response object is a writable stream
+  // const file = fs.createReadStream(invoicePath);  //read some specific data
+  
+  // file.pipe(res); //forward data that is read in the stream to the response, bcz response object is a writable stream
   }).catch(err => next(err));
 };
