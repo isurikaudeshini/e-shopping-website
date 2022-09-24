@@ -80,7 +80,9 @@ exports.updatePost = (req, res, next) => {
   const postId = req.params.postId;
   const errors = validationResult(req); //automatically extract errors that validation method gathers
   if (!errors.isEmpty()) {
-    const error = new Error('Validation failed, entered data is incorrect.- line 83');
+    const error = new Error(
+      'Validation failed, entered data is incorrect.- line 83'
+    );
     error.statusCode = 422;
     throw error;
   }
@@ -110,8 +112,8 @@ exports.updatePost = (req, res, next) => {
       post.content = content;
       return post.save();
     })
-    .then(result => {
-      res.status(200).json({message: 'Post updated', post: result});
+    .then((result) => {
+      res.status(200).json({ message: 'Post updated', post: result });
     })
     .catch((err) => {
       if (!err.statusCode) {
@@ -121,7 +123,32 @@ exports.updatePost = (req, res, next) => {
     });
 };
 
-const clearImage = filePath => {
+exports.deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+  Post.findById(postId)
+    .then((post) => {
+      if (!post) {
+        const error = new Error('No post found - line 131');
+        error.statusCode = 404;
+        throw error;
+      }
+      //check logged in user
+      clearImage(post.imageUrl);
+      return Post.findByIdAndRemove(postId);
+    })
+    .then(result => {
+      console.log(result);
+      res.status(200).json({ message: 'Deleted post.'})
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+const clearImage = (filePath) => {
   filePath = path.join(__dirname, '..', filePath);
-  fs.unlink(filePath, err => console.error(err));
+  fs.unlink(filePath, (err) => console.error(err));
 };

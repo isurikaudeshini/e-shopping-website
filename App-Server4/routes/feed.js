@@ -26,4 +26,5 @@ router.put('/post/:postId', [
 ], feedController.updatePost); 
 //put => throgh asynvhronous requests triggered by post by JS you can use, has req body , params
 
+router.delete('/post/:postId', feedController.deletePost); //delete=> can't send body
 module.exports = router;
