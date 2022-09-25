@@ -1,11 +1,12 @@
 const express = require('express');
 const { body } = require('express-validator');
 
-const router = express.Router();
-const authController = require('../controllers/auth');
+const User = require('../models/user');
 
-router.put(
-  '/signup',
+const authController = require('../controllers/auth');
+const router = express.Router();
+
+router.put('/signup',
   [
     body('email')
       .isEmail()
