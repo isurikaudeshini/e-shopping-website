@@ -127,7 +127,10 @@ class Feed extends Component {
 
     fetch(url, { //we need to configure that post request here
       method: method,
-      body: formData
+      body: formData,
+      headers: {
+        authorization: 'Bearer ' + this.props.token  // convention to identify the type of token
+      }
     })
       .then(res => {
         if (res.status !== 200 && res.status !== 201) {
@@ -180,7 +183,10 @@ class Feed extends Component {
   deletePostHandler = postId => {
     this.setState({ postsLoading: true });
     fetch('http://localhost:8080/feed/post/' + postId, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        authorization: 'Bearer ' + this.props.token  // convention to identify the type of token
+      }
     })
       .then(res => {
         if (res.status !== 200 && res.status !== 201) {
