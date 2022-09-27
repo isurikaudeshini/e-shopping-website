@@ -118,15 +118,20 @@ exports.updatePost = (req, res, next) => {
     imageUrl = req.file.path;
   }
   if (!imageUrl) {
-    const error = new Error('No file picked! line 94');
+    const error = new Error('No file picked!');
     error.statusCode = 422;
     throw error;
   }
   Post.findById(postId)
     .then((post) => {
       if (!post) {
-        const error = new Error('No post found - line 101');
+        const error = new Error('No post found');
         error.statusCode = 404;
+        throw error;
+      }
+      if(post.creator.toString() !== req.userId) {
+        const error = new Error('Not authrized!');
+        error.statusCode = 403;
         throw error;
       }
       if (imageUrl !== post.imageUrl) {
@@ -155,6 +160,11 @@ exports.deletePost = (req, res, next) => {
       if (!post) {
         const error = new Error('No post found - line 131');
         error.statusCode = 404;
+        throw error;
+      }
+      if(post.creator.toString() !== req.userId) {
+        const error = new Error('Not authrized!');
+        error.statusCode = 403;
         throw error;
       }
       //check logged in user
