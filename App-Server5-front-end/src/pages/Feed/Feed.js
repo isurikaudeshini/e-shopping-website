@@ -52,7 +52,7 @@ class Feed extends Component {
     }
     fetch('http://localhost:8080/feed/posts?page=' + page, {
       headers: {
-        authorization: 'Bearer ' + this.props.token  // convention to identify the type of token
+        Authorization: 'Bearer ' + this.props.token  // convention to identify the type of token
       }
     })
       .then(res => {
@@ -129,7 +129,7 @@ class Feed extends Component {
       method: method,
       body: formData,
       headers: {
-        authorization: 'Bearer ' + this.props.token  // convention to identify the type of token
+        Authorization: 'Bearer ' + this.props.token  // convention to identify the type of token
       }
     })
       .then(res => {
@@ -185,7 +185,7 @@ class Feed extends Component {
     fetch('http://localhost:8080/feed/post/' + postId, {
       method: 'DELETE',
       headers: {
-        authorization: 'Bearer ' + this.props.token  // convention to identify the type of token
+        Authorization: 'Bearer ' + this.props.token  // convention to identify the type of token
       }
     })
       .then(res => {
@@ -266,6 +266,7 @@ class Feed extends Component {
                   key={post._id}
                   id={post._id}
                   author={post.creator.name}
+                  // author= "USER"
                   date={new Date(post.createdAt).toLocaleDateString('en-US')}
                   title={post.title}
                   image={post.imageUrl}
