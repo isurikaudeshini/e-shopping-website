@@ -12,11 +12,11 @@ router.get('/posts', isAuth, feedController.getPosts);
 //POST/feed/posts
 router.post(
   '/post',
-  isAuth,
   [
     body('title').trim().isLength({ min: 5 }),
     body('content').trim().isLength({ min: 5 }),
   ],
+  isAuth,
   feedController.createPost
 );
 
@@ -26,7 +26,7 @@ router.put('/post/:postId', isAuth, [
   body('title').trim().isLength({ min: 5 }),
   body('content').trim().isLength({ min: 5 }),
 ], feedController.updatePost); 
-//put => throgh asynvhronous requests triggered by post by JS you can use, has req body , params
+//put => through asynchronous requests triggered by post by JS you can use, has req body , params
 
 router.delete('/post/:postId', isAuth, feedController.deletePost); //delete=> can't send body
 module.exports = router;

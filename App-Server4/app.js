@@ -63,6 +63,7 @@ mongoose
     'mongodb+srv://Isurika:SM7aEw8n5DDRxxl8@cluster0.3h6s7p1.mongodb.net/shop?retryWrites=true&w=majority'
   )
   .then((result) => {
+    console.log('connected to db')
     app.listen(8080);
   })
   .catch((err) => console.log(err));
