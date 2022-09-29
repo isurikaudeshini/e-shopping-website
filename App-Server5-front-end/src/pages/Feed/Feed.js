@@ -68,7 +68,7 @@ class Feed extends Component {
     });
   };
 
-  updatedPost = post => {
+  updatePost = post => {
     this.setState(prevState => {
       const updatedPosts = [...prevState.posts];
       const updatedPostIndex = updatedPosts.findIndex(p => p._id === post._id);
