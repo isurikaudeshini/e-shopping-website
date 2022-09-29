@@ -4,10 +4,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const multer = require('multer');
+const { graphqlHTTP } = require('express-graphql');
 
-const feedRoutes = require('./routes/feed');
-const authRoutes = require('./routes/auth');
-// const { socket } = require('socket.io');
+const graphqlSchema = require('./graphql/schema');
+const graphqlResolver = require('./graphql/resolvers');
 
 const app = express();
 
@@ -16,7 +16,10 @@ const fileStorage = multer.diskStorage({
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
+    cb(
+      null,
+      new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname
+    );
   },
 });
 
@@ -34,7 +37,8 @@ const fileFilter = (req, file, cb) => {
 
 // app.use(bodyParser.urlencoded(());
 app.use(bodyParser.json()); //application/json
-app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image')
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
 );
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
@@ -48,8 +52,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/feed', feedRoutes);
-app.use('/auth', authRoutes);
+app.use(
+  '/graphql',
+  graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolver,
+  })
+);
+
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -63,14 +73,9 @@ mongoose
   .connect(
     'mongodb+srv://Isurika:SM7aEw8n5DDRxxl8@cluster0.3h6s7p1.mongodb.net/shop?retryWrites=true&w=majority',
     { useNewUrlParser: true, useUnifiedTopology: true }
-
   )
   .then((result) => {
-    console.log('connected to db')
-    const server = app.listen(8080);
-    const io = require('./socket').init(server);
-    io.on('connection', socket => {
-      console.log('Client connected');
-    });
+    console.log('connected to db');
+    app.listen(8080);
   })
   .catch((err) => console.log(err));
