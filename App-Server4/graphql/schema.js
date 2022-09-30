@@ -20,9 +20,10 @@ type User {
     posts: [Post!]!
 }
 
-type AuthData {}
+type AuthData {
 token: String!
 userId: String!
+}
 
 input UserInputData {
     email: String!

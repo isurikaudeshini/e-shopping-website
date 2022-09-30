@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
-const jwt = require('jasonwebtoken');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
@@ -44,7 +44,7 @@ module.exports = {
       error.code = 401;
       throw error;
     }
-    const isEqual = await bcrypt.compare(password, user.email);
+    const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
       const error = new Error('Password is incorrect');
       error.code = 401;
