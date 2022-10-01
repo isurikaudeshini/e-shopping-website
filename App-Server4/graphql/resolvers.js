@@ -67,6 +67,7 @@ module.exports = {
       error.code =401;
       throw error;
     }
+    console.log(postInput, 'resolvers line 70');
     const errors = [];
     if (
       validator.isEmpty(postInput.title) ||
@@ -89,7 +90,7 @@ module.exports = {
     const user = await User.findById(req.userId);
     if (!user) {
       const error = new Error('Invalid user');
-      error.code =401;
+      error.code = 401;
       throw error;
     }
     const post = new Post({
@@ -99,7 +100,9 @@ module.exports = {
       creator: user
     });
     const createdPost = await post.save();
-    user.posts.pushe(createdPost);
+    user.posts.push(createdPost);
+    await user.save();
+    console.log(createdPost);
     //Add post to user;'s posts
     return {
       ...createdPost._doc,
