@@ -1,12 +1,19 @@
 // const fs = require('fs');
 import fs  from 'fs';
+import path, { dirname} from 'path';
 
-// Define a function to export to app.js
+import { fileURLToPath } from 'url';
+
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+  // Define a function to export to app.js
 export const resHandler =  (req, res, next) => {
-    fs.readFile('my-page.html', 'utf8', (err, data) => {
-      res.send(data);
-    });
-  }
+    // fs.readFile('my-page.html', 'utf8', (err, data) => {
+    //   res.send(data);
+    // });
+    res.sendFile(path.join(__dirname, 'my-page.html'));
+  };
 
 // exporting
 //   module.exports = resHandler;
