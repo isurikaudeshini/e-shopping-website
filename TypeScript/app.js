@@ -1,4 +1,4 @@
-var num1Element = document.getElementById('num1'); //Typecast to HTMLInputElement 
+var num1Element = document.getElementById('num1'); //Typecast to HTMLInputElement
 var num2Element = document.getElementById('num2');
 var buttonElement = document.querySelector('button');
 var numResults = [];
@@ -27,4 +27,12 @@ buttonElement.addEventListener('click', function () {
     textResults.push(stringresult);
     printResult({ val: result, timestamp: new Date() });
     console.log(numResults, textResults);
+});
+var myPromise = new Promise(function (resolve, reject) {
+    setTimeout(function () {
+        resolve('It worked');
+    }, 1000);
+});
+myPromise.then(function (result) {
+    console.log(result.split('w'));
 });
